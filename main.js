@@ -26,7 +26,7 @@ if (!config) process.exit(1);
 
 const host = ts.createCompilerHost(config.options);
 
-const inputPaths = glob.globSync(commander.program.args, { ignore: 'node_modules/**' });
+const inputPaths = glob.globSync(commander.program.args, { ignore: ['**/*.d.ts', 'node_modules/**' ] });
 
 const program = ts.createProgram(inputPaths, config.options, host);
 
