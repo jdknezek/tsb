@@ -1,6 +1,9 @@
+#!/usr/bin/env node
+
 import * as fs from 'node:fs/promises';
 
 import * as commander from 'commander';
+import * as glob from 'glob';
 import * as blank from 'ts-blank-space';
 import * as ts from 'typescript';
 
@@ -23,23 +26,28 @@ if (!config) process.exit(1);
 
 const host = ts.createCompilerHost(config.options);
 
-const program = ts.createProgram(commander.program.args, config.options, host);
+const inputPaths = glob.globSync(commander.program.args);
+
+const program = ts.createProgram(inputPaths, config.options, host);
 
 async function emitBlanked (config: ts.ParsedCommandLine) {
 	if (config.options.noEmit || config.options.emitDeclarationOnly) return;
 
-	await Promise.all(config.fileNames.map(async fileName => {
-		const sourceFile = program.getSourceFile(fileName);
+	await Promise.all(inputPaths.map(async inputPath => {
+		const sourceFile = program.getSourceFile(inputPath);
 		if (!sourceFile) return;
 
+		let error = false;
 		const blanked = blank.blankSourceFile(sourceFile, node => {
-			const start = node.getStart();
-			const position = ts.getLineAndCharacterOfPosition(sourceFile, start);
-			console.error('unsupported ts-blank-space syntax at %s:%s:%s:\n%s', fileName, position.line, position.character, node.getText());
+			error = true;
+			const position = ts.getLineAndCharacterOfPosition(sourceFile, node.getStart(sourceFile));
+			console.error('unsupported ts-blank-space syntax at %s:%d:%d', inputPath, position.line, position.character);
 		});
+		if (error) return;
 
-		const outputName = fileName.replace(/\.ts$/i, `.${opts.extension}`);
-		await fs.writeFile(outputName, blanked);
+		const outputPath = inputPath.replace(/\.ts$/i, `.${opts.extension}`);
+		console.log(inputPath, '->', outputPath);
+		await fs.writeFile(outputPath, blanked);
 	}));
 }
 
