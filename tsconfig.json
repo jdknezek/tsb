@@ -1,0 +1,12 @@
+{
+	"compilerOptions": {
+		"target": "esnext",
+		"useDefineForClassFields": true,
+		"verbatimModuleSyntax": true,
+
+		"module": "nodenext",
+		"moduleResolution": "nodenext",
+
+		"strict": true,
+	}
+}
