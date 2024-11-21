@@ -3,6 +3,7 @@
   "version": "0.4.3",
   "description": "ts-blank-space CLI",
   "main": "main.js",
+  "bin": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node --import ts-blank-space/register main.ts main.ts"
