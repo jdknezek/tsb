@@ -9,10 +9,29 @@ import * as ts from 'typescript';
 
 commander.program
 	.option('-c, --config <path>', 'tsconfig.json path', './tsconfig.json')
-	.option('-e, --extension <extension>', 'output extension', 'js');
+	.option('-e, --extension <extension>', 'output extension', 'js')
+	.option('--init', 'initialize minimal tsconfig.json', false);
 
 commander.program.parse();
 const opts = commander.program.opts();
+
+if (opts.init) {
+	let config: any;
+	try {
+		const text = await fs.readFile(opts.config, 'utf-8');
+		config = JSON.parse(text);
+	} catch (err) {
+		config = {};
+	}
+
+	const compilerOptions = config.compilerOptions ||= {};
+	compilerOptions.target = 'esnext';
+	compilerOptions.useDefineForClassFields = true;
+	compilerOptions.verbatimModuleSyntax = true;
+
+	await fs.writeFile(opts.config, JSON.stringify(config, null, '\t'));
+	process.exit(0);
+}
 
 const config = ts.getParsedCommandLineOfConfigFile(opts.config, undefined, {
 	fileExists: ts.sys.fileExists,
