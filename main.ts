@@ -118,8 +118,9 @@ async function watch (config: ts.ParsedCommandLine) {
 	host.afterProgramCreate = async (program) => {
 		while (true) {
 			const emitted = program.emitNextAffectedFile(undefined, undefined, true);
+			if (!emitted) break;
 
-			if (!emitted || (emitted.affected as any).kind !== ts.SyntaxKind.SourceFile) continue;
+			if ((emitted.affected as any).kind !== ts.SyntaxKind.SourceFile) continue;
 			const sourceFile = emitted.affected as ts.SourceFile;
 			if (sourceFile.fileName.includes('node_modules') || sourceFile.fileName.endsWith('.d.ts')) continue;
 

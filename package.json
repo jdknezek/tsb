@@ -6,8 +6,7 @@
   "bin": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "node --import ts-blank-space/register main.ts",
-    "watch": "node --import ts-blank-space/register main.ts -w"
+    "build": "node --import ts-blank-space/register main.ts"
   },
   "repository": {
     "type": "git",
