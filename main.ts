@@ -50,6 +50,7 @@ async function init () {
 	}
 
 	const compilerOptions = config.compilerOptions ||= {};
+	compilerOptions.erasableSyntaxOnly = true;
 	compilerOptions.target = 'esnext';
 	compilerOptions.useDefineForClassFields = true;
 	compilerOptions.verbatimModuleSyntax = true;
